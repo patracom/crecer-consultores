@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sistema Acreditacion Crecer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brand-primary: #740640;
+    --brand-secondary: #9b0e52;
+    --brand-dark: #4e032b;
+    --brand-accent: #ff7f50;
+    --page-bg: #f6f4f7;
+    --surface: #ffffff;
+    --surface-soft: #fbf8fa;
+    --border: #d2dce0;
+    --text: #27324b;
+    --muted: #575c62;
+    --success: #2f8f5b;
+    --warning: #ef9d31;
+    --danger: #d84848;
+    --info: #325fc7;
+    --shadow-sm: 0 10px 22px rgba(81, 20, 56, 0.08);
+    --shadow-md: 0 18px 42px rgba(81, 20, 56, 0.12);
+    --radius-lg: 22px;
+    --radius-md: 16px;
+    --radius-sm: 12px;
+    --font-display: "Outfit", sans-serif;
+    --font-body: "Plus Jakarta Sans", sans-serif;
+  }
+
+  body {
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at top left, rgba(255, 127, 80, 0.12), transparent 28%),
+      radial-gradient(circle at right center, rgba(155, 14, 82, 0.08), transparent 25%),
+      linear-gradient(180deg, #faf7f9 0%, #f4f2f6 100%);
+    color: var(--text);
+    font-family: var(--font-body);
+  }
+
+  .shell {
+    width: min(1380px, calc(100% - 32px));
+    margin: 18px auto;
+    background: rgba(255, 255, 255, 0.72);
+    border: 1px solid rgba(210, 220, 224, 0.7);
+    border-radius: 28px;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    backdrop-filter: blur(16px);
+  }
+
+  .topbar {
+    background: linear-gradient(135deg, var(--brand-dark) 0%, var(--brand-primary) 48%, var(--brand-secondary) 100%);
+    color: #fff;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-width: 260px;
+  }
+
+  .brand-mark {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.24), rgba(255,255,255,0.08));
+    border: 1px solid rgba(255,255,255,0.22);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-display);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .brand-copy strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.08rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .brand-copy span {
+    display: block;
+    margin-top: 2px;
+    font-size: 0.78rem;
+    color: rgba(255,255,255,0.8);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav a,
+  .nav button {
+    border: 0;
+    background: transparent;
+    color: #fff;
+    text-decoration: none;
+    font: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 12px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .nav a:hover,
+  .nav button:hover,
+  .nav .active {
+    background: rgba(255,255,255,0.13);
+    transform: translateY(-1px);
+  }
+
+  .logout {
+    background: rgba(255,255,255,0.16);
+    border: 1px solid rgba(255,255,255,0.14);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
+  }
+
+  .content {
+    padding: 34px 34px 38px;
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.7rem, 2vw, 2.2rem);
+    line-height: 1.15;
+    color: var(--brand-primary);
+  }
+
+  .hero-card {
+    margin-top: 22px;
+    background: linear-gradient(180deg, #ffffff 0%, #fffafc 100%);
+    border: 1px solid rgba(210, 220, 224, 0.9);
+    border-radius: var(--radius-lg);
+    padding: 24px 26px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .hero-card h2 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    margin-bottom: 12px;
+  }
+
+  .hero-card p {
+    max-width: 980px;
+    color: var(--muted);
+    line-height: 1.75;
+    font-size: 0.98rem;
+  }
+
+  .hero-card strong {
+    color: var(--brand-primary);
+  }
+
+  .dashboard-grid {
+    margin-top: 26px;
+    display: grid;
+    grid-template-columns: minmax(0, 1.8fr) minmax(330px, 0.95fr);
+    gap: 22px;
+    align-items: start;
+  }
+
+  .panel {
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(210, 220, 224, 0.9);
+    border-radius: 24px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .panel-head {
+    padding: 22px 24px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    border-bottom: 1px solid rgba(210, 220, 224, 0.65);
+  }
+
+  .panel-head h3 {
+    font-family: var(--font-display);
+    font-size: 1.28rem;
+  }
+
+  .panel-head p {
+    color: var(--muted);
+    margin-top: 4px;
+    font-size: 0.92rem;
+  }
+
+  .toolbar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .toolbar input,
+  .toolbar select,
+  .modal-field input,
+  .modal-field select {
+    border: 1px solid var(--border);
+    background: var(--surface-soft);
+    color: var(--text);
+    font: inherit;
+    font-size: 0.94rem;
+    border-radius: 12px;
+    padding: 12px 14px;
+    outline: none;
+  }
+
+  .toolbar input:focus,
+  .toolbar select:focus,
+  .modal-field input:focus,
+  .modal-field select:focus {
+    border-color: var(--brand-secondary);
+    box-shadow: 0 0 0 4px rgba(155, 14, 82, 0.08);
+  }
+
+  .table-wrap {
+    padding: 14px 18px 18px;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: hidden;
+  }
+
+  thead th {
+    text-align: left;
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 16px 14px;
+    background: #faf8fb;
+    border-bottom: 1px solid rgba(210, 220, 224, 0.9);
+  }
+
+  tbody tr {
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  tbody tr:hover {
+    background: rgba(155, 14, 82, 0.04);
+  }
+
+  tbody tr.active {
+    background: linear-gradient(90deg, rgba(116, 6, 64, 0.08), rgba(255, 127, 80, 0.06));
+  }
+
+  tbody td {
+    padding: 18px 14px;
+    border-bottom: 1px solid rgba(210, 220, 224, 0.7);
+    font-size: 0.95rem;
+  }
+
+  tbody td strong {
+    color: var(--text);
+  }
+
+  .status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 108px;
+    padding: 9px 12px;
+    border-radius: 999px;
+    color: #fff;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.15);
+  }
+
+  .status.review { background: linear-gradient(135deg, #f3ad33, #dc8225); }
+  .status.observed { background: linear-gradient(135deg, #eb6666, #c73737); }
+  .status.approved { background: linear-gradient(135deg, #37a06a, #2b7d52); }
+  .status.accredited { background: linear-gradient(135deg, #4d72df, #325fc7); }
+
+  .list-actions {
+    padding: 0 18px 22px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .primary-btn,
+  .secondary-btn {
+    border: 0;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 14px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .primary-btn {
+    background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary));
+    color: #fff;
+    padding: 14px 22px;
+    box-shadow: 0 14px 28px rgba(116, 6, 64, 0.22);
+  }
+
+  .secondary-btn {
+    padding: 13px 18px;
+    background: rgba(116, 6, 64, 0.08);
+    color: var(--brand-primary);
+  }
+
+  .primary-btn:hover,
+  .secondary-btn:hover {
+    transform: translateY(-1px);
+  }
+
+  .detail-body {
+    padding: 22px 24px 24px;
+  }
+
+  .detail-grid {
+    display: grid;
+    gap: 18px;
+  }
+
+  .detail-row {
+    display: grid;
+    grid-template-columns: 112px 1fr;
+    gap: 12px;
+    align-items: center;
+    font-size: 0.95rem;
+  }
+
+  .detail-row span:first-child {
+    color: var(--muted);
+    font-weight: 700;
+  }
+
+  .detail-block {
+    padding-top: 18px;
+    border-top: 1px solid rgba(210, 220, 224, 0.75);
+  }
+
+  .detail-block h4 {
+    font-size: 0.96rem;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .detail-block p {
+    color: var(--muted);
+    line-height: 1.7;
+    font-size: 0.93rem;
+  }
+
+  .doc-list {
+    display: grid;
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  .doc-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 13px 14px;
+    border-radius: 14px;
+    background: #faf8fb;
+    border: 1px solid rgba(210, 220, 224, 0.7);
+  }
+
+  .doc-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  .doc-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    background: rgba(116, 6, 64, 0.1);
+    color: var(--brand-primary);
+    flex-shrink: 0;
+  }
+
+  .doc-name {
+    font-size: 0.92rem;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .doc-download {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    border: 0;
+    background: rgba(116, 6, 64, 0.1);
+    color: var(--brand-primary);
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+  }
+
+  .stats-strip {
+    margin-top: 22px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .stat-card {
+    background: rgba(255,255,255,0.9);
+    border: 1px solid rgba(210, 220, 224, 0.85);
+    border-radius: 20px;
+    padding: 18px 18px 16px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .stat-card span {
+    display: block;
+    color: var(--muted);
+    font-size: 0.84rem;
+    margin-bottom: 10px;
+  }
+
+  .stat-card strong {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    color: var(--brand-primary);
+  }
+
+  .stat-card small {
+    display: block;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.83rem;
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(38, 20, 30, 0.42);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+  }
+
+  .modal-backdrop.open {
+    display: flex;
+  }
+
+  .modal {
+    width: min(560px, 100%);
+    background: #fff;
+    border-radius: 24px;
+    border: 1px solid rgba(210, 220, 224, 0.9);
+    box-shadow: 0 24px 60px rgba(48, 18, 34, 0.2);
+    overflow: hidden;
+  }
+
+  .modal-head {
+    padding: 22px 24px 18px;
+    border-bottom: 1px solid rgba(210, 220, 224, 0.75);
+  }
+
+  .modal-head h3 {
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+  }
+
+  .modal-head p {
+    margin-top: 6px;
+    color: var(--muted);
+    font-size: 0.93rem;
+  }
+
+  .modal-form {
+    padding: 22px 24px 24px;
+    display: grid;
+    gap: 16px;
+  }
+
+  .modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  .modal-field label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--muted);
+    font-size: 0.84rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 6px;
+  }
+
+  .ghost-btn {
+    background: #f3eff2;
+    color: var(--text);
+    border: 0;
+    border-radius: 14px;
+    padding: 13px 18px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  .table-empty {
+    padding: 28px 20px;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  @media (max-width: 1100px) {
+    .dashboard-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .stats-strip {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 760px) {
+    .shell {
+      width: calc(100% - 16px);
+      margin: 8px auto;
+      border-radius: 18px;
+    }
+
+    .topbar,
+    .content {
+      padding: 18px;
+    }
+
+    .topbar {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .brand {
+      min-width: 0;
+    }
+
+    .nav {
+      justify-content: flex-start;
+    }
+
+    .panel-head {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .toolbar,
+    .toolbar input,
+    .toolbar select {
+      width: 100%;
+    }
+
+    .detail-row {
+      grid-template-columns: 1fr;
+      gap: 4px;
+    }
+
+    .stats-strip,
+    .modal-grid {
+      grid-template-columns: 1fr;
+    }
+
+    table,
+    thead,
+    tbody,
+    th,
+    td,
+    tr {
+      display: block;
+    }
+
+    thead {
+      display: none;
+    }
+
+    tbody tr {
+      padding: 14px;
+      border-bottom: 1px solid rgba(210, 220, 224, 0.7);
+    }
+
+    tbody td {
+      border: 0;
+      padding: 8px 0;
+    }
+
+    tbody td::before {
+      content: attr(data-label);
+      display: block;
+      margin-bottom: 4px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">CC</div>
+        <div class="brand-copy">
+          <strong>Crecer Consultores</strong>
+          <span>Portal de gestión</span>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Principal">
+        <a href="#" class="active">Inicio</a>
+        <a href="#">Trabajadores</a>
+        <a href="#" id="nav-upload">Subir trabajador</a>
+        <a href="#">Estado de acreditación</a>
+        <button type="button" class="logout">Cerrar sesión</button>
+      </nav>
+    </header>
+
+    <main class="content">
+      <section class="hero">
+        <h1>Acreditación Crecer - Portal de Gestión de Faena</h1>
+        <div class="hero-card">
+          <h2>Bienvenido al Portal de Acreditación Crecer</h2>
+          <p>
+            A través de esta plataforma podrá gestionar la <strong>documentación de sus trabajadores</strong>,
+            realizar cargas de información y hacer seguimiento en tiempo real del
+            <strong>estado de acreditación para ingreso a faena</strong>. El objetivo es mantener un proceso
+            ordenado, eficiente y alineado a los requisitos del mandante.
+          </p>
+        </div>
+      </section>
+
+      <section class="stats-strip" aria-label="Indicadores">
+        <article class="stat-card">
+          <span>Trabajadores registrados</span>
+          <strong id="stat-total">4</strong>
+          <small>Base operativa actual</small>
+        </article>
+        <article class="stat-card">
+          <span>Acreditados</span>
+          <strong id="stat-accredited">1</strong>
+          <small>Listos para ingreso</small>
+        </article>
+        <article class="stat-card">
+          <span>Observados</span>
+          <strong id="stat-observed">1</strong>
+          <small>Requieren gestión documental</small>
+        </article>
+        <article class="stat-card">
+          <span>En revisión</span>
+          <strong id="stat-review">1</strong>
+          <small>Validación en curso</small>
+        </article>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Listado de Trabajadores</h3>
+              <p>Control de acreditación por empresa y faena.</p>
+            </div>
+
+            <div class="toolbar">
+              <input type="search" id="search-input" placeholder="Buscar por nombre o empresa" />
+              <select id="status-filter">
+                <option value="all">Todos los estados</option>
+                <option value="review">En revisión</option>
+                <option value="observed">Observado</option>
+                <option value="approved">Aprobado</option>
+                <option value="accredited">Acreditado</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Empresa</th>
+                  <th>Faena</th>
+                  <th>Estado de Acreditación</th>
+                </tr>
+              </thead>
+              <tbody id="workers-tbody"></tbody>
+            </table>
+            <div class="table-empty" id="empty-state" hidden>No hay trabajadores que coincidan con el filtro.</div>
+          </div>
+
+          <div class="list-actions">
+            <button class="primary-btn" id="open-modal-btn" type="button">Subir Nuevo Trabajador</button>
+          </div>
+        </article>
+
+        <aside class="panel">
+          <div class="panel-head">
+            <div>
+              <h3>Detalle del Trabajador</h3>
+              <p>Ficha resumida y trazabilidad documental.</p>
+            </div>
+          </div>
+
+          <div class="detail-body">
+            <div class="detail-grid">
+              <div class="detail-row">
+                <span>Nombre</span>
+                <strong id="detail-name">Pedro Soto</strong>
+              </div>
+              <div class="detail-row">
+                <span>Empresa</span>
+                <strong id="detail-company">Empresa Sur</strong>
+              </div>
+              <div class="detail-row">
+                <span>Faena</span>
+                <strong id="detail-site">Collahuasi</strong>
+              </div>
+
+              <div class="detail-block">
+                <h4>Estado de Acreditación</h4>
+                <div id="detail-status"></div>
+              </div>
+
+              <div class="detail-block">
+                <h4>Observaciones y Requisitos Pendientes</h4>
+                <p id="detail-notes">Falta examen preocupacional vigente.</p>
+              </div>
+
+              <div class="detail-block">
+                <h4>Documentos Adjuntos</h4>
+                <div class="doc-list" id="detail-docs"></div>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="worker-modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <h3 id="modal-title">Subir Nuevo Trabajador</h3>
+        <p>Registre datos base y estado inicial de acreditación.</p>
+      </div>
+
+      <form class="modal-form" id="worker-form">
+        <div class="modal-grid">
+          <div class="modal-field">
+            <label for="worker-name">Nombre</label>
+            <input id="worker-name" name="worker-name" type="text" required />
+          </div>
+
+          <div class="modal-field">
+            <label for="worker-company">Empresa</label>
+            <input id="worker-company" name="worker-company" type="text" required />
+          </div>
+        </div>
+
+        <div class="modal-grid">
+          <div class="modal-field">
+            <label for="worker-site">Faena</label>
+            <input id="worker-site" name="worker-site" type="text" required />
+          </div>
+
+          <div class="modal-field">
+            <label for="worker-status">Estado</label>
+            <select id="worker-status" name="worker-status">
+              <option value="review">En revisión</option>
+              <option value="observed">Observado</option>
+              <option value="approved">Aprobado</option>
+              <option value="accredited">Acreditado</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-field">
+          <label for="worker-notes">Observaciones</label>
+          <input id="worker-notes" name="worker-notes" type="text" placeholder="Ej. Falta anexo contractual firmado" />
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="ghost-btn" id="close-modal-btn">Cancelar</button>
+          <button type="submit" class="primary-btn">Guardar trabajador</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+  const STORAGE_KEY = "crecer_sistema_acreditacion";
+  const defaultWorkers = [
+    {
+      id: 1,
+      name: "Juan Pérez",
+      company: "Empresa Norte",
+      site: "Escondida",
+      status: "review",
+      notes: "Documentación ingresada y pendiente de validación por mandante.",
+      documents: ["Ficha_Juan_Perez.pdf", "Contrato_Juan_Perez.pdf"]
+    },
+    {
+      id: 2,
+      name: "Pedro Soto",
+      company: "Empresa Sur",
+      site: "Collahuasi",
+      status: "observed",
+      notes: "Falta examen preocupacional vigente.",
+      documents: ["Contrato_Pedro_Soto.pdf"]
+    },
+    {
+      id: 3,
+      name: "Ana Gómez",
+      company: "Industrias ABC",
+      site: "QB",
+      status: "approved",
+      notes: "Expediente validado. Pendiente liberación de ingreso final.",
+      documents: ["Carpeta_Ana_Gomez.zip", "Examen_Ana_Gomez.pdf"]
+    },
+    {
+      id: 4,
+      name: "Luis Morales",
+      company: "Minera XY",
+      site: "Spence",
+      status: "accredited",
+      notes: "Trabajador acreditado y habilitado para ingreso a faena.",
+      documents: ["Credencial_Luis_Morales.pdf", "Anexo_Luis_Morales.pdf"]
+    }
+  ];
+
+  const statusMeta = {
+    review: { label: "En revisión", className: "review" },
+    observed: { label: "Observado", className: "observed" },
+    approved: { label: "Aprobado", className: "approved" },
+    accredited: { label: "Acreditado", className: "accredited" }
+  };
+
+  let workers = loadWorkers();
+  let selectedWorkerId = workers[1] ? workers[1].id : workers[0]?.id ?? null;
+
+  const tbody = document.getElementById("workers-tbody");
+  const searchInput = document.getElementById("search-input");
+  const statusFilter = document.getElementById("status-filter");
+  const emptyState = document.getElementById("empty-state");
+  const modal = document.getElementById("worker-modal");
+  const workerForm = document.getElementById("worker-form");
+
+  function loadWorkers() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) return JSON.parse(saved);
+    } catch (error) {}
+    return [...defaultWorkers];
+  }
+
+  function persistWorkers() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(workers));
+  }
+
+  function statusBadge(status) {
+    const meta = statusMeta[status] || statusMeta.review;
+    return `<span class="status ${meta.className}">${meta.label}</span>`;
+  }
+
+  function filteredWorkers() {
+    const term = searchInput.value.trim().toLowerCase();
+    const filter = statusFilter.value;
+
+    return workers.filter((worker) => {
+      const matchesTerm =
+        worker.name.toLowerCase().includes(term) ||
+        worker.company.toLowerCase().includes(term) ||
+        worker.site.toLowerCase().includes(term);
+      const matchesStatus = filter === "all" || worker.status === filter;
+      return matchesTerm && matchesStatus;
+    });
+  }
+
+  function renderTable() {
+    const rows = filteredWorkers();
+    tbody.innerHTML = "";
+
+    if (!rows.length) {
+      emptyState.hidden = false;
+      return;
+    }
+
+    emptyState.hidden = true;
+
+    rows.forEach((worker) => {
+      const tr = document.createElement("tr");
+      if (worker.id === selectedWorkerId) tr.classList.add("active");
+      tr.innerHTML = `
+        <td data-label="Nombre"><strong>${worker.name}</strong></td>
+        <td data-label="Empresa">${worker.company}</td>
+        <td data-label="Faena">${worker.site}</td>
+        <td data-label="Estado">${statusBadge(worker.status)}</td>
+      `;
+      tr.addEventListener("click", () => {
+        selectedWorkerId = worker.id;
+        renderTable();
+        renderDetail();
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  function renderDetail() {
+    const worker = workers.find((item) => item.id === selectedWorkerId) || workers[0];
+    if (!worker) return;
+
+    document.getElementById("detail-name").textContent = worker.name;
+    document.getElementById("detail-company").textContent = worker.company;
+    document.getElementById("detail-site").textContent = worker.site;
+    document.getElementById("detail-status").innerHTML = statusBadge(worker.status);
+    document.getElementById("detail-notes").textContent = worker.notes || "Sin observaciones registradas.";
+
+    const docs = document.getElementById("detail-docs");
+    docs.innerHTML = "";
+
+    worker.documents.forEach((doc) => {
+      const item = document.createElement("div");
+      item.className = "doc-item";
+      item.innerHTML = `
+        <div class="doc-main">
+          <div class="doc-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M7 3h7l5 5v13H7V3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M14 3v6h6" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="doc-name">${doc}</div>
+        </div>
+        <button class="doc-download" type="button" aria-label="Descargar ${doc}">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 4v11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="m7 11 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5 20h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </button>
+      `;
+      docs.appendChild(item);
+    });
+  }
+
+  function renderStats() {
+    const total = workers.length;
+    const accredited = workers.filter((worker) => worker.status === "accredited").length;
+    const observed = workers.filter((worker) => worker.status === "observed").length;
+    const review = workers.filter((worker) => worker.status === "review").length;
+
+    document.getElementById("stat-total").textContent = String(total);
+    document.getElementById("stat-accredited").textContent = String(accredited);
+    document.getElementById("stat-observed").textContent = String(observed);
+    document.getElementById("stat-review").textContent = String(review);
+  }
+
+  function openModal() {
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    document.getElementById("worker-name").focus();
+  }
+
+  function closeModal() {
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    workerForm.reset();
+  }
+
+  function addWorker(event) {
+    event.preventDefault();
+
+    const worker = {
+      id: Date.now(),
+      name: document.getElementById("worker-name").value.trim(),
+      company: document.getElementById("worker-company").value.trim(),
+      site: document.getElementById("worker-site").value.trim(),
+      status: document.getElementById("worker-status").value,
+      notes: document.getElementById("worker-notes").value.trim() || "Sin observaciones registradas.",
+      documents: ["Ficha_Ingreso.pdf"]
+    };
+
+    if (!worker.name || !worker.company || !worker.site) return;
+
+    workers.unshift(worker);
+    selectedWorkerId = worker.id;
+    persistWorkers();
+    renderAll();
+    closeModal();
+  }
+
+  function renderAll() {
+    renderTable();
+    renderDetail();
+    renderStats();
+  }
+
+  document.getElementById("open-modal-btn").addEventListener("click", openModal);
+  document.getElementById("nav-upload").addEventListener("click", (event) => {
+    event.preventDefault();
+    openModal();
+  });
+  document.getElementById("close-modal-btn").addEventListener("click", closeModal);
+  modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeModal();
+  });
+  workerForm.addEventListener("submit", addWorker);
+  searchInput.addEventListener("input", renderTable);
+  statusFilter.addEventListener("change", renderTable);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") closeModal();
+  });
+
+  renderAll();
+</script>
+</body>
+</html>

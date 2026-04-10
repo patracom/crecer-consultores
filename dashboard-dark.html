@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Crecer Consultores — Dashboard Ejecutivo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg0: #0C0E14;
+    --bg1: #11141C;
+    --bg2: #161A25;
+    --bg3: #1C2030;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text1: #E9ECF5;
+    --text2: rgba(233,236,245,0.55);
+    --text3: rgba(233,236,245,0.32);
+    --blue: #4B6EF5;
+    --blue-dim: rgba(75,110,245,0.18);
+    --blue-light: #7B9EF8;
+    --green: #3EC99A;
+    --green-dim: rgba(62,201,154,0.15);
+    --red: #F07272;
+    --red-dim: rgba(240,114,114,0.14);
+    --amber: #F5C063;
+    --amber-dim: rgba(245,192,99,0.14);
+    --purple: #9B7BF8;
+    --purple-dim: rgba(155,123,248,0.15);
+    --radius: 12px;
+    --radius-sm: 8px;
+    --font: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+    --shadow-sm: 0 10px 24px rgba(0,0,0,0.22), 0 2px 6px rgba(0,0,0,0.16);
+    --shadow-md: 0 18px 42px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.18);
+  }
+  html, body { height: 100%; background: var(--bg0); color: var(--text1); font-family: var(--font); font-size: 14px; overflow: hidden; }
+
+  /* LAYOUT */
+  .shell { display: flex; height: 100vh; }
+  .sidebar { width: 230px; min-width: 230px; background: var(--bg1); border-right: 1px solid var(--border); display: flex; flex-direction: column; box-shadow: var(--shadow-sm); }
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .topbar { background: var(--bg1); border-bottom: 1px solid var(--border); padding: 14px 28px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; box-shadow: var(--shadow-sm); }
+  .content { flex: 1; overflow-y: auto; padding: 24px 28px; display: flex; flex-direction: column; gap: 20px; }
+
+  /* SIDEBAR */
+  .sb-logo { padding: 22px 20px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 11px; }
+  .sb-logo-icon { width: 34px; height: 34px; border-radius: 9px; background: var(--blue); display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px; color: #fff; flex-shrink: 0; box-shadow: 0 8px 18px rgba(75,110,245,0.28); }
+  .sb-logo-name { font-size: 15px; font-weight: 600; color: var(--text1); }
+  .sb-logo-tag { font-size: 10px; color: var(--text3); font-family: var(--mono); margin-top: 1px; }
+  .sb-nav { flex: 1; padding: 14px 12px; overflow-y: auto; }
+  .sb-section { font-size: 10px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; padding: 0 8px; margin: 14px 0 6px; font-family: var(--mono); }
+  .sb-item { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-radius: var(--radius-sm); font-size: 13px; color: var(--text2); cursor: pointer; margin-bottom: 2px; transition: all 0.15s; user-select: none; }
+  .sb-item:hover { background: rgba(255,255,255,0.05); color: var(--text1); }
+  .sb-item.active { background: var(--blue-dim); color: var(--blue-light); }
+  .sb-item svg { opacity: 0.7; flex-shrink: 0; }
+  .sb-item.active svg { opacity: 1; }
+  .sb-bottom { border-top: 1px solid var(--border); padding: 14px 12px; }
+  .sb-user { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: var(--radius-sm); cursor: pointer; transition: background 0.15s; }
+  .sb-user:hover { background: rgba(255,255,255,0.04); }
+  .sb-avatar { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--blue), var(--purple)); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: #fff; flex-shrink: 0; }
+  .sb-user-name { font-size: 13px; font-weight: 500; color: var(--text1); }
+  .sb-user-role { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+
+  /* TOPBAR */
+  .tb-left h1 { font-size: 15px; font-weight: 500; color: var(--text1); }
+  .tb-left p { font-size: 12px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
+  .tb-right { display: flex; align-items: center; gap: 10px; }
+  .tb-period { display: flex; background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; }
+  .tb-period button { background: none; border: none; color: var(--text2); font-size: 12px; font-family: var(--font); padding: 6px 12px; cursor: pointer; transition: all 0.15s; }
+  .tb-period button.active { background: var(--blue); color: #fff; }
+  .tb-period button:hover:not(.active) { background: rgba(255,255,255,0.05); color: var(--text1); }
+  .btn-primary { background: var(--blue); color: #fff; border: none; font-size: 12px; font-family: var(--font); font-weight: 500; padding: 8px 16px; border-radius: var(--radius-sm); cursor: pointer; transition: opacity 0.15s; box-shadow: 0 8px 20px rgba(75,110,245,0.22); }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-secondary { background: var(--bg2); color: var(--text2); border: 1px solid var(--border); font-size: 12px; font-family: var(--font); padding: 7px 14px; border-radius: var(--radius-sm); cursor: pointer; transition: all 0.15s; display: flex; align-items: center; gap: 6px; }
+  .btn-secondary:hover { background: var(--bg3); color: var(--text1); }
+
+  /* CARDS */
+  .card { background: var(--bg1); border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; box-shadow: var(--shadow-sm); }
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--text1); }
+  .card-sub { font-size: 11px; color: var(--text3); margin-top: 3px; font-family: var(--mono); }
+  .pill { font-size: 11px; padding: 4px 10px; border-radius: 20px; font-family: var(--mono); white-space: nowrap; }
+  .pill-blue { background: var(--blue-dim); color: var(--blue-light); border: 1px solid rgba(75,110,245,0.25); }
+  .pill-green { background: var(--green-dim); color: var(--green); border: 1px solid rgba(62,201,154,0.25); }
+  .pill-red { background: var(--red-dim); color: var(--red); border: 1px solid rgba(240,114,114,0.25); }
+  .pill-amber { background: var(--amber-dim); color: var(--amber); border: 1px solid rgba(245,192,99,0.25); }
+  .pill-purple { background: var(--purple-dim); color: var(--purple); border: 1px solid rgba(155,123,248,0.25); }
+
+  /* METRICS */
+  .metrics-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 14px; }
+  .metric-card { background: var(--bg1); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 20px; cursor: pointer; transition: all 0.18s; box-shadow: var(--shadow-sm); }
+  .metric-card:hover { border-color: var(--border2); box-shadow: var(--shadow-md); transform: translateY(-1px); }
+  .metric-card.editing { border-color: var(--blue); }
+  .mc-label { font-size: 11px; color: var(--text3); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 10px; font-family: var(--mono); }
+  .mc-value { font-size: 26px; font-weight: 600; color: var(--text1); line-height: 1; font-family: var(--mono); }
+  .mc-change { font-size: 11px; display: flex; align-items: center; gap: 5px; margin-top: 8px; font-family: var(--mono); }
+  .mc-up { color: var(--green); }
+  .mc-down { color: var(--red); }
+  .mc-bar { height: 3px; border-radius: 2px; background: rgba(255,255,255,0.07); margin-top: 14px; overflow: hidden; }
+  .mc-bar-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+  .mc-edit-hint { font-size: 10px; color: var(--text3); margin-top: 6px; opacity: 0; transition: opacity 0.2s; font-family: var(--mono); }
+  .metric-card:hover .mc-edit-hint { opacity: 1; }
+  .mc-icon { width: 36px; height: 36px; border-radius: 9px; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+
+  /* CHARTS ROW */
+  .charts-row { display: grid; grid-template-columns: 2fr 1fr; gap: 14px; }
+
+  /* BAR CHART */
+  .bar-chart-wrap { position: relative; height: 160px; }
+
+  /* DONUT */
+  .donut-container { display: flex; flex-direction: column; align-items: center; }
+  .donut-svg-wrap { position: relative; width: 140px; height: 140px; margin: 0 auto; }
+  .donut-center-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+  .donut-total { font-size: 20px; font-weight: 600; color: var(--text1); font-family: var(--mono); }
+  .donut-lbl { font-size: 10px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
+  .donut-legend { width: 100%; margin-top: 14px; }
+  .dl-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 0; border-top: 1px solid rgba(255,255,255,0.04); font-size: 12px; }
+  .dl-left { display: flex; align-items: center; gap: 8px; color: var(--text2); }
+  .dl-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+  .dl-pct { color: var(--text1); font-weight: 500; font-family: var(--mono); }
+
+  /* BOTTOM ROW */
+  .bottom-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+  /* TABLE */
+  .tbl { width: 100%; border-collapse: collapse; }
+  .tbl th { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; padding: 0 0 10px; text-align: left; border-bottom: 1px solid var(--border); font-family: var(--mono); }
+  .tbl th:last-child { text-align: right; }
+  .tbl td { font-size: 13px; color: var(--text2); padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.04); vertical-align: middle; }
+  .tbl td:last-child { text-align: right; }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tr:hover td { color: var(--text1); }
+  .tbl .td-name { color: var(--text1); font-weight: 500; }
+  .tbl .td-seg { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+  .tbl .td-amount { font-family: var(--mono); font-weight: 500; color: var(--text1); }
+  .status { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 3px 9px; border-radius: 20px; font-family: var(--mono); cursor: pointer; transition: opacity 0.15s; }
+  .status:hover { opacity: 0.75; }
+
+  /* ACTIVITY */
+  .act-list { display: flex; flex-direction: column; }
+  .act-item { display: flex; align-items: flex-start; gap: 12px; padding: 11px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .act-item:last-child { border-bottom: none; }
+  .act-icon { width: 34px; height: 34px; border-radius: 9px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .act-body { flex: 1; }
+  .act-title { font-size: 13px; color: var(--text1); line-height: 1.4; }
+  .act-meta { font-size: 11px; color: var(--text3); margin-top: 3px; font-family: var(--mono); }
+
+  /* TOAST */
+  #toast { position: fixed; bottom: 24px; right: 28px; background: var(--bg3); border: 1px solid var(--border2); color: var(--text1); font-size: 13px; padding: 12px 18px; border-radius: var(--radius-sm); display: flex; align-items: center; gap: 10px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); transform: translateY(80px); opacity: 0; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); z-index: 1000; pointer-events: none; }
+  #toast.show { transform: translateY(0); opacity: 1; }
+  #toast .toast-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); flex-shrink: 0; }
+
+  /* MODAL EDIT */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 500; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius); padding: 24px; width: 360px; box-shadow: var(--shadow-md); transform: translateY(12px) scale(0.98); transition: transform 0.2s; }
+  .modal-overlay.open .modal { transform: none; }
+  .modal-title { font-size: 14px; font-weight: 500; margin-bottom: 18px; color: var(--text1); }
+  .modal-field { margin-bottom: 14px; }
+  .modal-field label { font-size: 11px; color: var(--text3); display: block; margin-bottom: 6px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.07em; }
+  .modal-field input, .modal-field select { width: 100%; background: var(--bg3); border: 1px solid var(--border); color: var(--text1); font-size: 13px; font-family: var(--font); padding: 9px 12px; border-radius: var(--radius-sm); outline: none; transition: border-color 0.15s; }
+  .modal-field input:focus, .modal-field select:focus { border-color: var(--blue); }
+  .modal-field select option { background: var(--bg3); }
+  .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+  .btn-cancel { background: none; border: 1px solid var(--border); color: var(--text2); font-size: 13px; font-family: var(--font); padding: 8px 16px; border-radius: var(--radius-sm); cursor: pointer; }
+  .btn-save { background: var(--blue); color: #fff; border: none; font-size: 13px; font-family: var(--font); font-weight: 500; padding: 8px 18px; border-radius: var(--radius-sm); cursor: pointer; box-shadow: 0 8px 20px rgba(75,110,245,0.22); }
+  .btn-save:hover { opacity: 0.88; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: none; } }
+  .metrics-grid, .charts-row, .bottom-row { animation: fadeIn 0.4s ease forwards; }
+  .charts-row { animation-delay: 0.05s; }
+  .bottom-row { animation-delay: 0.1s; }
+</style>
+</head>
+<body>
+
+<div class="shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">C</div>
+      <div>
+        <div class="sb-logo-name">Crecer Consultores</div>
+        <div class="sb-logo-tag">enterprise · v2.4</div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      <div class="sb-section">Principal</div>
+      <div class="sb-item active" onclick="setNav(this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="5.5" height="5.5" rx="1.5" fill="currentColor"/><rect x="9.5" y="1" width="5.5" height="5.5" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="1" y="9.5" width="5.5" height="5.5" rx="1.5" fill="currentColor" opacity="0.5"/><rect x="9.5" y="9.5" width="5.5" height="5.5" rx="1.5" fill="currentColor" opacity="0.5"/></svg>
+        Resumen
+      </div>
+      <div class="sb-item" onclick="setNav(this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><polyline points="1,12 5,7 8,9 11,4 15,6" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Análisis
+      </div>
+      <div class="sb-item" onclick="setNav(this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 4.5v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Proyecciones
+      </div>
+      <div class="sb-section">Gestión</div>
+      <div class="sb-item" onclick="setNav(this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2.5 13c0-2.2 1.8-3.5 5.5-3.5s5.5 1.3 5.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="8" cy="5.5" r="2.8" stroke="currentColor" stroke-width="1.3"/></svg>
+        Clientes
+      </div>
+      <div class="sb-item" onclick="setNav(this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M5 8h6M5 11h4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Reportes
+      </div>
+      <div class="sb-item" onclick="setNav(this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5l1.8 4.5h4.7l-3.8 2.8 1.4 4.4L8 10.7l-4.1 2.5 1.4-4.4L1.5 6h4.7z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+        Campañas
+      </div>
+      <div class="sb-section">Sistema</div>
+      <div class="sb-item" onclick="setNav(this)">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 1.5v2M8 12.5v2M1.5 8h2M12.5 8h2M3.4 3.4l1.4 1.4M11.2 11.2l1.4 1.4M3.4 12.6l1.4-1.4M11.2 4.8l1.4-1.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Configuración
+      </div>
+    </nav>
+    <div class="sb-bottom">
+      <div class="sb-user">
+        <div class="sb-avatar">AM</div>
+        <div>
+          <div class="sb-user-name">Ana Mora</div>
+          <div class="sb-user-role">Dir. Comercial</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="topbar">
+      <div class="tb-left">
+        <h1>Resumen ejecutivo</h1>
+        <p id="last-saved">Sin cambios guardados</p>
+      </div>
+      <div class="tb-right">
+        <div class="tb-period">
+          <button class="active" onclick="setPeriod(this,'Q1')">Q1</button>
+          <button onclick="setPeriod(this,'Q2')">Q2</button>
+          <button onclick="setPeriod(this,'Q3')">Q3</button>
+          <button onclick="setPeriod(this,'Q4')">Q4</button>
+        </div>
+        <button class="btn-secondary" onclick="exportCSV()">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M6.5 1v8M3.5 6l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 10.5h11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Exportar
+        </button>
+        <button class="btn-primary" onclick="saveAll()">Guardar</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- METRICS -->
+      <div class="metrics-grid">
+        <div class="metric-card" onclick="editMetric('revenue')">
+          <div class="mc-icon" style="background:rgba(75,110,245,0.15);">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 14l4-5 3 2 4-6 3 2" stroke="#7B9EF8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="mc-label">Ingresos totales</div>
+          <div class="mc-value" id="val-revenue">$4.82M</div>
+          <div class="mc-change mc-up" id="chg-revenue">
+            <svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1,8 4,4 7,6 10,2" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            +18.4% vs trimestre anterior
+          </div>
+          <div class="mc-bar"><div class="mc-bar-fill" id="bar-revenue" style="width:76%;background:var(--blue);"></div></div>
+          <div class="mc-edit-hint">Clic para editar</div>
+        </div>
+        <div class="metric-card" onclick="editMetric('clients')">
+          <div class="mc-icon" style="background:rgba(62,201,154,0.12);">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 15c0-2.5 2-4 6-4s6 1.5 6 4" stroke="#3EC99A" stroke-width="1.6" stroke-linecap="round"/><circle cx="9" cy="7" r="3" stroke="#3EC99A" stroke-width="1.6"/></svg>
+          </div>
+          <div class="mc-label">Nuevos clientes</div>
+          <div class="mc-value" id="val-clients">1,247</div>
+          <div class="mc-change mc-up" id="chg-clients">
+            <svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1,8 4,4 7,6 10,2" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            +9.1% este mes
+          </div>
+          <div class="mc-bar"><div class="mc-bar-fill" id="bar-clients" style="width:58%;background:var(--green);"></div></div>
+          <div class="mc-edit-hint">Clic para editar</div>
+        </div>
+        <div class="metric-card" onclick="editMetric('conversion')">
+          <div class="mc-icon" style="background:rgba(240,114,114,0.12);">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M5 10l4 5 4-5" stroke="#F07272" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <div class="mc-label">Tasa de conversión</div>
+          <div class="mc-value" id="val-conversion">24.6%</div>
+          <div class="mc-change mc-down" id="chg-conversion">
+            <svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1,2 4,6 7,4 10,8" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            −2.3% vs mes anterior
+          </div>
+          <div class="mc-bar"><div class="mc-bar-fill" id="bar-conversion" style="width:45%;background:var(--red);"></div></div>
+          <div class="mc-edit-hint">Clic para editar</div>
+        </div>
+        <div class="metric-card" onclick="editMetric('ticket')">
+          <div class="mc-icon" style="background:rgba(155,123,248,0.14);">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="5" width="14" height="10" rx="2" stroke="#9B7BF8" stroke-width="1.6"/><path d="M6 5V4a3 3 0 016 0v1" stroke="#9B7BF8" stroke-width="1.6" stroke-linecap="round"/></svg>
+          </div>
+          <div class="mc-label">Ticket promedio</div>
+          <div class="mc-value" id="val-ticket">$3,864</div>
+          <div class="mc-change mc-up" id="chg-ticket">
+            <svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1,8 4,4 7,6 10,2" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            +5.7% vs mes anterior
+          </div>
+          <div class="mc-bar"><div class="mc-bar-fill" id="bar-ticket" style="width:62%;background:var(--purple);"></div></div>
+          <div class="mc-edit-hint">Clic para editar</div>
+        </div>
+      </div>
+
+      <!-- CHARTS -->
+      <div class="charts-row">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Ingresos mensuales</div>
+              <div class="card-sub">Comparativa 2025 vs 2026</div>
+            </div>
+            <span class="pill pill-blue" id="active-period-label">Q1 2026</span>
+          </div>
+          <div class="bar-chart-wrap">
+            <canvas id="revenueChart"></canvas>
+          </div>
+          <div style="display:flex;gap:18px;margin-top:14px;">
+            <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);font-family:var(--mono);"><span style="width:10px;height:10px;border-radius:2px;background:#4B6EF5;"></span>2026</span>
+            <span style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text3);font-family:var(--mono);"><span style="width:10px;height:10px;border-radius:2px;background:rgba(75,110,245,0.3);"></span>2025</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Segmentos</div>
+              <div class="card-sub">Distribución Q1</div>
+            </div>
+          </div>
+          <div class="donut-container">
+            <div class="donut-svg-wrap">
+              <svg width="140" height="140" viewBox="0 0 140 140" id="donut-svg">
+                <circle cx="70" cy="70" r="52" fill="none" stroke="#1C2030" stroke-width="22"/>
+                <circle cx="70" cy="70" r="52" fill="none" stroke="#4B6EF5" stroke-width="22" stroke-dasharray="131 196" stroke-dashoffset="49"/>
+                <circle cx="70" cy="70" r="52" fill="none" stroke="#3EC99A" stroke-width="22" stroke-dasharray="85 242" stroke-dashoffset="-82"/>
+                <circle cx="70" cy="70" r="52" fill="none" stroke="#9B7BF8" stroke-width="22" stroke-dasharray="49 278" stroke-dashoffset="-167"/>
+                <circle cx="70" cy="70" r="52" fill="none" stroke="#F5C063" stroke-width="22" stroke-dasharray="32 295" stroke-dashoffset="-216"/>
+              </svg>
+              <div class="donut-center-label">
+                <div class="donut-total">$4.8M</div>
+                <div class="donut-lbl">total</div>
+              </div>
+            </div>
+            <div class="donut-legend">
+              <div class="dl-item"><div class="dl-left"><div class="dl-dot" style="background:#4B6EF5;"></div>Enterprise</div><div class="dl-pct">40%</div></div>
+              <div class="dl-item"><div class="dl-left"><div class="dl-dot" style="background:#3EC99A;"></div>Mid-Market</div><div class="dl-pct">26%</div></div>
+              <div class="dl-item"><div class="dl-left"><div class="dl-dot" style="background:#9B7BF8;"></div>SMB</div><div class="dl-pct">15%</div></div>
+              <div class="dl-item"><div class="dl-left"><div class="dl-dot" style="background:#F5C063;"></div>Startup</div><div class="dl-pct">10%</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM -->
+      <div class="bottom-row">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Principales cuentas</div>
+              <div class="card-sub">Por volumen de facturación</div>
+            </div>
+            <button class="btn-secondary" style="font-size:11px;padding:5px 10px;" onclick="openAddClient()">+ Agregar</button>
+          </div>
+          <table class="tbl" id="clients-table">
+            <thead>
+              <tr><th>Cliente</th><th>Segmento</th><th>Monto</th><th>Estado</th></tr>
+            </thead>
+            <tbody id="clients-tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <div class="card-title">Actividad reciente</div>
+              <div class="card-sub">Últimas 24 horas</div>
+            </div>
+          </div>
+          <div class="act-list" id="activity-list"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"><div class="toast-dot"></div><span id="toast-msg">Cambios guardados</span></div>
+
+<!-- MODAL EDICIÓN MÉTRICA -->
+<div class="modal-overlay" id="metric-modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-metric-title">Editar métrica</div>
+    <div class="modal-field">
+      <label>Valor</label>
+      <input type="text" id="modal-metric-value" placeholder="Ej: $4.82M"/>
+    </div>
+    <div class="modal-field">
+      <label>Variación (texto)</label>
+      <input type="text" id="modal-metric-change" placeholder="Ej: +18.4% vs trimestre anterior"/>
+    </div>
+    <div class="modal-field">
+      <label>Tendencia</label>
+      <select id="modal-metric-trend">
+        <option value="up">Positiva (verde)</option>
+        <option value="down">Negativa (rojo)</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Progreso barra (%)</label>
+      <input type="number" id="modal-metric-bar" min="0" max="100" placeholder="76"/>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeMetricModal()">Cancelar</button>
+      <button class="btn-save" onclick="saveMetric()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL AGREGAR CLIENTE -->
+<div class="modal-overlay" id="client-modal">
+  <div class="modal">
+    <div class="modal-title">Agregar cliente</div>
+    <div class="modal-field">
+      <label>Nombre</label>
+      <input type="text" id="cl-name" placeholder="Ej: Grupo Andino"/>
+    </div>
+    <div class="modal-field">
+      <label>Segmento</label>
+      <select id="cl-seg">
+        <option>Enterprise</option><option>Mid-Market</option><option>SMB</option><option>Startup</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Monto</label>
+      <input type="text" id="cl-amount" placeholder="Ej: $420K"/>
+    </div>
+    <div class="modal-field">
+      <label>Estado</label>
+      <select id="cl-status">
+        <option value="active">Activo</option>
+        <option value="pending">Pendiente</option>
+        <option value="risk">En riesgo</option>
+      </select>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeClientModal()">Cancelar</button>
+      <button class="btn-save" onclick="addClient()">Agregar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── STATE ──────────────────────────────────────────────────────────────────
+const DEFAULT_STATE = {
+  period: 'Q1',
+  metrics: {
+    revenue:    { value: '$4.82M', change: '+18.4% vs trimestre anterior', trend: 'up', bar: 76 },
+    clients:    { value: '1,247',  change: '+9.1% este mes',               trend: 'up', bar: 58 },
+    conversion: { value: '24.6%', change: '−2.3% vs mes anterior',         trend: 'down', bar: 45 },
+    ticket:     { value: '$3,864', change: '+5.7% vs mes anterior',         trend: 'up', bar: 62 }
+  },
+  clients: [
+    { name: 'Grupo Andino',   seg: 'Enterprise', amount: '$420K', status: 'active'  },
+    { name: 'TechVentures',   seg: 'Mid-Market', amount: '$285K', status: 'active'  },
+    { name: 'Meridian Corp',  seg: 'Enterprise', amount: '$260K', status: 'pending' },
+    { name: 'Solaris Ltda',   seg: 'SMB',        amount: '$148K', status: 'active'  },
+    { name: 'DataCore SA',    seg: 'Startup',    amount: '$92K',  status: 'risk'    }
+  ],
+  activity: [
+    { icon: 'contract', title: 'Contrato firmado · Grupo Andino',       time: 'Hace 42 min'   },
+    { icon: 'payment',  title: 'Pago recibido · $285K · TechVentures',  time: 'Hace 1h 20min' },
+    { icon: 'clock',    title: 'Renovación pendiente · Meridian Corp',  time: 'Hace 3h 10min' },
+    { icon: 'user',     title: 'Nuevo lead calificado · DataCore SA',   time: 'Hace 5h 45min' }
+  ]
+};
+
+let state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+let currentMetricKey = null;
+const STORAGE_KEY = 'crecer_consultores_dashboard';
+
+// ─── PERSIST ────────────────────────────────────────────────────────────────
+function loadState() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) { state = JSON.parse(saved); showToast('Datos restaurados del almacenamiento local', false); }
+  } catch(e) {}
+}
+
+function persistState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function saveAll() {
+  try {
+    persistState();
+    const now = new Date();
+    const t = now.toLocaleTimeString('es-CL', { hour:'2-digit', minute:'2-digit' });
+    document.getElementById('last-saved').textContent = `Guardado hoy a las ${t}`;
+    showToast('Cambios guardados correctamente');
+    addActivity(`Dashboard guardado · ${t}`);
+  } catch(e) {
+    showToast('Error al guardar', false);
+  }
+}
+
+// ─── RENDER ─────────────────────────────────────────────────────────────────
+function render() {
+  // metrics
+  Object.entries(state.metrics).forEach(([key, m]) => {
+    const valEl = document.getElementById('val-' + key);
+    const chgEl = document.getElementById('chg-' + key);
+    const barEl = document.getElementById('bar-' + key);
+    if (valEl) valEl.textContent = m.value;
+    if (chgEl) {
+      chgEl.className = 'mc-change ' + (m.trend === 'up' ? 'mc-up' : 'mc-down');
+      const arrow = m.trend === 'up'
+        ? '<svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1,8 4,4 7,6 10,2" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        : '<svg width="11" height="11" viewBox="0 0 11 11"><polyline points="1,2 4,6 7,4 10,8" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+      chgEl.innerHTML = arrow + ' ' + m.change;
+    }
+    if (barEl) barEl.style.width = m.bar + '%';
+  });
+  // clients
+  renderClients();
+  // activity
+  renderActivity();
+}
+
+function renderClients() {
+  const tbody = document.getElementById('clients-tbody');
+  tbody.innerHTML = '';
+  state.clients.forEach((c, i) => {
+    const statusMap = {
+      active:  { label: 'Activo',    cls: 'pill-green'  },
+      pending: { label: 'Pendiente', cls: 'pill-amber'  },
+      risk:    { label: 'En riesgo', cls: 'pill-red'    }
+    };
+    const s = statusMap[c.status] || statusMap.active;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="td-name">${c.name}</td>
+      <td class="td-seg">${c.seg}</td>
+      <td class="td-amount">${c.amount}</td>
+      <td><span class="status pill ${s.cls}" onclick="cycleStatus(${i})">${s.label}</span></td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+const ACT_ICONS = {
+  contract: `<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 12.5V3.5a1 1 0 011-1h8a1 1 0 011 1v9" stroke="#7B9EF8" stroke-width="1.3" stroke-linecap="round"/><path d="M5 7h5M5 9.5h3" stroke="#7B9EF8" stroke-width="1.3" stroke-linecap="round"/></svg>`,
+  payment:  `<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><polyline points="2,8 6,12 13,4" stroke="#3EC99A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  clock:    `<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><circle cx="7.5" cy="7.5" r="5.5" stroke="#F5C063" stroke-width="1.3"/><path d="M7.5 4.5v3.5l2.5 1.5" stroke="#F5C063" stroke-width="1.3" stroke-linecap="round"/></svg>`,
+  user:     `<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M2.5 12c0-2 1.6-3 5-3s5 1 5 3" stroke="#9B7BF8" stroke-width="1.3" stroke-linecap="round"/><circle cx="7.5" cy="5.5" r="2.5" stroke="#9B7BF8" stroke-width="1.3"/></svg>`,
+  save:     `<svg width="15" height="15" viewBox="0 0 15 15" fill="none"><rect x="2" y="2" width="11" height="11" rx="2" stroke="#4B6EF5" stroke-width="1.3"/><path d="M5 2v3h5V2" stroke="#4B6EF5" stroke-width="1.3" stroke-linejoin="round"/><rect x="4.5" y="8" width="6" height="3.5" rx="0.5" stroke="#4B6EF5" stroke-width="1.3"/></svg>`
+};
+const ACT_BG = { contract:'rgba(75,110,245,0.15)', payment:'rgba(62,201,154,0.12)', clock:'rgba(245,192,99,0.12)', user:'rgba(155,123,248,0.14)', save:'rgba(75,110,245,0.12)' };
+
+function renderActivity() {
+  const list = document.getElementById('activity-list');
+  list.innerHTML = '';
+  state.activity.slice(0, 5).forEach(a => {
+    const icon = ACT_ICONS[a.icon] || ACT_ICONS.save;
+    const bg   = ACT_BG[a.icon]   || ACT_BG.save;
+    const div = document.createElement('div');
+    div.className = 'act-item';
+    div.innerHTML = `
+      <div class="act-icon" style="background:${bg};">${icon}</div>
+      <div class="act-body">
+        <div class="act-title">${a.title}</div>
+        <div class="act-meta">${a.time}</div>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+}
+
+function addActivity(title, icon = 'save') {
+  const now = new Date();
+  state.activity.unshift({ icon, title, time: now.toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'}) });
+  if (state.activity.length > 8) state.activity.pop();
+  persistState();
+  renderActivity();
+}
+
+// ─── PERIOD ──────────────────────────────────────────────────────────────────
+function setPeriod(btn, period) {
+  document.querySelectorAll('.tb-period button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  state.period = period;
+  document.getElementById('active-period-label').textContent = period + ' 2026';
+  persistState();
+}
+
+// ─── METRIC MODAL ─────────────────────────────────────────────────────────
+const METRIC_LABELS = { revenue:'Ingresos totales', clients:'Nuevos clientes', conversion:'Tasa de conversión', ticket:'Ticket promedio' };
+
+function editMetric(key) {
+  currentMetricKey = key;
+  const m = state.metrics[key];
+  document.getElementById('modal-metric-title').textContent = 'Editar · ' + METRIC_LABELS[key];
+  document.getElementById('modal-metric-value').value  = m.value;
+  document.getElementById('modal-metric-change').value = m.change;
+  document.getElementById('modal-metric-trend').value  = m.trend;
+  document.getElementById('modal-metric-bar').value    = m.bar;
+  document.getElementById('metric-modal').classList.add('open');
+}
+
+function closeMetricModal() { document.getElementById('metric-modal').classList.remove('open'); currentMetricKey = null; }
+
+function saveMetric() {
+  if (!currentMetricKey) return;
+  state.metrics[currentMetricKey] = {
+    value: document.getElementById('modal-metric-value').value,
+    change: document.getElementById('modal-metric-change').value,
+    trend: document.getElementById('modal-metric-trend').value,
+    bar: parseInt(document.getElementById('modal-metric-bar').value) || 50
+  };
+  render();
+  closeMetricModal();
+  showToast('Métrica actualizada');
+  addActivity('Métrica editada · ' + METRIC_LABELS[currentMetricKey]);
+}
+
+// ─── CLIENT MODAL ─────────────────────────────────────────────────────────
+function openAddClient() { document.getElementById('client-modal').classList.add('open'); }
+function closeClientModal() { document.getElementById('client-modal').classList.remove('open'); }
+
+function addClient() {
+  const name   = document.getElementById('cl-name').value.trim();
+  const seg    = document.getElementById('cl-seg').value;
+  const amount = document.getElementById('cl-amount').value.trim();
+  const status = document.getElementById('cl-status').value;
+  if (!name || !amount) { showToast('Completa nombre y monto', false); return; }
+  state.clients.unshift({ name, seg, amount, status });
+  renderClients();
+  closeClientModal();
+  showToast('Cliente agregado');
+  addActivity('Nuevo cliente · ' + name, 'user');
+  document.getElementById('cl-name').value = '';
+  document.getElementById('cl-amount').value = '';
+}
+
+// ─── STATUS CYCLE ─────────────────────────────────────────────────────────
+function cycleStatus(i) {
+  const cycle = ['active','pending','risk'];
+  const cur = state.clients[i].status;
+  state.clients[i].status = cycle[(cycle.indexOf(cur)+1) % cycle.length];
+  renderClients();
+  showToast('Estado actualizado · ' + state.clients[i].name);
+  addActivity('Estado cambiado · ' + state.clients[i].name);
+}
+
+// ─── SIDEBAR NAV ──────────────────────────────────────────────────────────
+function setNav(el) {
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  el.classList.add('active');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg, success = true) {
+  const t = document.getElementById('toast');
+  const dot = t.querySelector('.toast-dot');
+  document.getElementById('toast-msg').textContent = msg;
+  dot.style.background = success ? 'var(--green)' : 'var(--amber)';
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ─── EXPORT CSV ───────────────────────────────────────────────────────────
+function exportCSV() {
+  const rows = [['Cliente','Segmento','Monto','Estado']];
+  state.clients.forEach(c => rows.push([c.name, c.seg, c.amount, c.status]));
+  const csv = rows.map(r => r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+  a.download = 'crecer-consultores-clientes.csv';
+  a.click();
+  showToast('CSV exportado');
+  addActivity('Datos exportados a CSV');
+}
+
+// ─── CHART ────────────────────────────────────────────────────────────────
+function initChart() {
+  const ctx = document.getElementById('revenueChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Nov','Dic','Ene','Feb','Mar','Abr'],
+      datasets: [
+        {
+          label: '2026',
+          data: [580,620,710,780,840,920],
+          borderColor: '#4B6EF5',
+          borderWidth: 2,
+          pointRadius: 3,
+          pointBackgroundColor: '#4B6EF5',
+          tension: 0.4,
+          fill: true,
+          backgroundColor: function(ctx) {
+            const g = ctx.chart.ctx.createLinearGradient(0,0,0,160);
+            g.addColorStop(0,'rgba(75,110,245,0.2)');
+            g.addColorStop(1,'rgba(75,110,245,0)');
+            return g;
+          }
+        },
+        {
+          label: '2025',
+          data: [420,480,520,590,640,700],
+          borderColor: 'rgba(75,110,245,0.3)',
+          borderWidth: 1.5,
+          borderDash: [4,4],
+          pointRadius: 0,
+          tension: 0.4,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: '#1C2030',
+          borderColor: 'rgba(255,255,255,0.1)',
+          borderWidth: 1,
+          titleColor: 'rgba(233,236,245,0.6)',
+          bodyColor: '#E9ECF5',
+          padding: 10,
+          callbacks: { label: c => ' $' + c.raw + 'K' }
+        }
+      },
+      scales: {
+        x: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          ticks: { color: 'rgba(233,236,245,0.4)', font: { size: 11, family: "'DM Mono'" } }
+        },
+        y: {
+          grid: { color: 'rgba(255,255,255,0.04)' },
+          border: { display: false },
+          ticks: { color: 'rgba(233,236,245,0.4)', font: { size: 11, family: "'DM Mono'" }, callback: v => '$' + v + 'K' }
+        }
+      }
+    }
+  });
+}
+
+// ─── MODAL CLOSE ON OVERLAY CLICK ────────────────────────────────────────
+document.getElementById('metric-modal').addEventListener('click', function(e) { if(e.target === this) closeMetricModal(); });
+document.getElementById('client-modal').addEventListener('click', function(e) { if(e.target === this) closeClientModal(); });
+
+// ─── KEYBOARD SHORTCUT ────────────────────────────────────────────────────
+document.addEventListener('keydown', function(e) {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); saveAll(); }
+  if (e.key === 'Escape') { closeMetricModal(); closeClientModal(); }
+});
+
+// ─── INIT ─────────────────────────────────────────────────────────────────
+loadState();
+render();
+initChart();
+
+// Check if there's saved data
+const saved = localStorage.getItem(STORAGE_KEY);
+if (saved) {
+  const d = new Date();
+  document.getElementById('last-saved').textContent = 'Datos cargados desde localStorage';
+}
+</script>
+</body>
+</html>

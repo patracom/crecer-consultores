@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Crecer Consultores | Navegacion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:"Plus Jakarta Sans",sans-serif;background:radial-gradient(circle at top left,rgba(255,127,80,.12),transparent 24%),radial-gradient(circle at 85% 18%,rgba(155,14,82,.12),transparent 22%),linear-gradient(180deg,#fcf8fb 0%,#f5edf3 100%);color:#2f2431}
+a{text-decoration:none;color:inherit}
+.shell{min-height:100vh;padding:32px 20px 40px}
+.wrap{max-width:1140px;margin:0 auto}
+.hero{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(260px,.9fr);gap:18px;align-items:stretch}
+.hero-card,.panel{background:rgba(255,255,255,.86);border:1px solid rgba(116,6,64,.1);border-radius:28px;box-shadow:0 22px 48px rgba(87,20,52,.1);backdrop-filter:blur(16px)}
+.hero-card{padding:28px;background:linear-gradient(135deg,#740640 0%,#9b0e52 70%,#bf5d8f 100%);color:#fff}
+.eyebrow{display:inline-flex;align-items:center;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.14);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}
+h1{margin:18px 0 10px;font-family:"Outfit",sans-serif;font-size:clamp(2rem,3vw,3.2rem);line-height:1.02}
+.hero-card p{margin:0;color:rgba(255,255,255,.86);line-height:1.7;max-width:760px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:12px 16px;border-radius:14px;font-weight:700}
+.btn-primary{background:#fff;color:#740640}
+.btn-secondary{border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.08);color:#fff}
+.hero-side{padding:22px}
+.hero-side h2,.panel h2{margin:0;font-family:"Outfit",sans-serif;font-size:1.2rem}
+.hero-side p,.panel-head p{margin:6px 0 0;color:#7f7280;line-height:1.6}
+.quick-list{display:grid;gap:12px;margin-top:18px}
+.quick-item{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-radius:18px;background:rgba(116,6,64,.04);border:1px solid rgba(116,6,64,.08)}
+.quick-item strong{display:block;font-size:.95rem}
+.quick-item span{font-size:.82rem;color:#7f7280}
+.quick-pill{display:inline-grid;place-items:center;min-width:34px;height:34px;padding:0 10px;border-radius:999px;background:rgba(155,14,82,.1);color:#740640;font-family:"Outfit",sans-serif;font-weight:700}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin-top:22px}
+.panel{padding:22px}
+.panel-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:16px}
+.badge{display:inline-flex;align-items:center;justify-content:center;padding:8px 12px;border-radius:999px;font-size:.75rem;font-weight:700;background:rgba(116,6,64,.08);color:#740640}
+.cards{display:grid;gap:14px}
+.nav-card{display:grid;grid-template-columns:56px 1fr auto;gap:14px;align-items:center;padding:16px;border-radius:22px;border:1px solid rgba(116,6,64,.08);background:rgba(255,255,255,.8);transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease}
+.nav-card:hover{transform:translateY(-2px);box-shadow:0 18px 32px rgba(87,20,52,.08);border-color:rgba(116,6,64,.16)}
+.nav-icon{width:56px;height:56px;border-radius:18px;display:grid;place-items:center;font-family:"Outfit",sans-serif;font-size:1rem;font-weight:700;background:linear-gradient(135deg,rgba(116,6,64,.14),rgba(155,14,82,.08));color:#740640}
+.nav-copy strong{display:block;font-family:"Outfit",sans-serif;font-size:1.02rem}
+.nav-copy span{display:block;margin-top:4px;color:#7f7280;line-height:1.55;font-size:.86rem}
+.nav-arrow{font-size:1.3rem;color:#9b0e52}
+.foot{margin-top:20px;text-align:center;color:#8a7c89;font-size:.84rem}
+@media (max-width:900px){.hero,.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="wrap">
+    <section class="hero">
+      <article class="hero-card">
+        <div class="eyebrow">Crecer Consultores</div>
+        <h1>Portal de maquetas navegables para GitHub Pages</h1>
+        <p>Este indice centraliza las pantallas publicadas del proyecto para poder navegar el sitio desde GitHub Pages sin depender de abrir archivos locales por separado.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="sistema-acreditacion-crecer-v2.html">Abrir portal v2</a>
+          <a class="btn btn-secondary" href="dashboard-light.html">Ver dashboard light</a>
+        </div>
+      </article>
+      <aside class="hero-side hero-card panel">
+        <h2>Accesos rapidos</h2>
+        <p>Entradas disponibles en el repositorio publicable.</p>
+        <div class="quick-list">
+          <div class="quick-item">
+            <div>
+              <strong>Portal acreditacion v2</strong>
+              <span>Vista principal con CRUD y navegacion interna</span>
+            </div>
+            <div class="quick-pill">V2</div>
+          </div>
+          <div class="quick-item">
+            <div>
+              <strong>Dashboards ejecutivos</strong>
+              <span>Versiones clara y oscura del tablero base</span>
+            </div>
+            <div class="quick-pill">2</div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Sistemas</h2>
+            <p>Pantallas operativas orientadas al flujo de acreditacion.</p>
+          </div>
+          <span class="badge">Principal</span>
+        </div>
+        <div class="cards">
+          <a class="nav-card" href="sistema-acreditacion-crecer-v2.html">
+            <div class="nav-icon">AC</div>
+            <div class="nav-copy">
+              <strong>Sistema Acreditacion Crecer V2</strong>
+              <span>Sidebar, vistas internas, CRUD de trabajadores, detalle modal y estilo corporativo.</span>
+            </div>
+            <div class="nav-arrow">›</div>
+          </a>
+          <a class="nav-card" href="sistema-acreditacion-crecer.html">
+            <div class="nav-icon">V1</div>
+            <div class="nav-copy">
+              <strong>Sistema Acreditacion Crecer</strong>
+              <span>Primera version de la maqueta con estructura mas simple.</span>
+            </div>
+            <div class="nav-arrow">›</div>
+          </a>
+        </div>
+      </article>
+
+      <article class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Dashboards</h2>
+            <p>Versiones base del tablero con persistencia local.</p>
+          </div>
+          <span class="badge">Mockups</span>
+        </div>
+        <div class="cards">
+          <a class="nav-card" href="dashboard-light.html">
+            <div class="nav-icon">DL</div>
+            <div class="nav-copy">
+              <strong>Dashboard Light</strong>
+              <span>Version clara del dashboard original trabajado en el repo.</span>
+            </div>
+            <div class="nav-arrow">›</div>
+          </a>
+          <a class="nav-card" href="dashboard-dark.html">
+            <div class="nav-icon">DD</div>
+            <div class="nav-copy">
+              <strong>Dashboard Dark</strong>
+              <span>Version oscura equivalente al dashboard base.</span>
+            </div>
+            <div class="nav-arrow">›</div>
+          </a>
+        </div>
+      </article>
+    </section>
+
+    <div class="foot">Repositorio: crecer-consultores</div>
+  </div>
+</div>
+</body>
+</html>
